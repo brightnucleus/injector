@@ -117,6 +117,23 @@ Config files are defined through the `configFiles` configuration key:
 ]
 ```
 
+## Registering Additional Mappings
+
+You can register additional mappings at any time by simply passing additional Configs to the `Injector::registerMappings()` method. It takes the exact same format as the constructor.
+
+```PHP
+$config = ConfigFactory::create([
+    'standardAliases => [
+        'ExampleInterface' => 'ConcreteExample'
+    ]
+]);
+$injector->registerMappings($config);
+// Here, `$object` will be an instance of `ConcreteExample`.
+$object = $injector->make('ExampleInterface');
+```
+
+__Note__: For such a simple example, creating a configuration file is of course overkill. You can just as well use the basic `Auryn` [alias functionality](https://github.com/rdlowrey/auryn/blob/master/README.md#type-hint-aliasing) and just `Injector::alias()` an additional alias. Refer to the [Auryn Documentation](https://github.com/rdlowrey/auryn/blob/master/README.md#type-hint-aliasing) to read more about the different ways of configuring the injector manually.
+
 ## Contributing
 
 All feedback / bug reports / pull requests are welcome.
