@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<ruleset name="brightnucleus\injector">
+    <description>The coding standard for Bright Nucleus Injector.</description>
+
+    <exclude-pattern>*/tests/*</exclude-pattern>
+
+    <arg name="report" value="summary"/>
+    <arg value="np"/>
+
+    <rule ref="PSR2"/>
+</ruleset>
