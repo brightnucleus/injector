@@ -13,6 +13,10 @@ This is an extension of the [Auryn](https://github.com/rdlowrey/auryn) dependenc
 
 * [Installation](#installation)
 * [Basic Usage](#basic-usage)
+    * [Standard Aliases](#standard-aliases)
+    * [Shared Aliases](#shared-aliases)
+    * [Config Files](#config-files)
+* [Registering Additional Mappings](#registering-additional-mappings)
 * [Contributing](#contributing)
 * [License](#license)
 
