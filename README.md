@@ -15,7 +15,7 @@ This is an extension of the [Auryn](https://github.com/rdlowrey/auryn) dependenc
 * [Basic Usage](#basic-usage)
     * [Standard Aliases](#standard-aliases)
     * [Shared Aliases](#shared-aliases)
-    * [Config Files](#config-files)
+    * [Argument Providers](#argument-providers)
 * [Registering Additional Mappings](#registering-additional-mappings)
 * [Contributing](#contributing)
 * [License](#license)
