@@ -97,27 +97,34 @@ Shared aliases are defined through the `sharedAliases` configuration key:
 ]
 ```
 
-### Config Files
+### Argument Providers
 
-Pretty much all of the Bright Nucleus components use Config files to do project-specific work. That's why the Bright Nucleus Injector comes with support for Config files directly built in (using `brightnucleus/config`).
+The argument providers allow you to let the `Injector` know what to pass in to arguments, like `$config` or `$logger`. As these are probably different for each object, we need a way to map them to specific aliases (instead of having one global value to pass in). This is done by mapping each alias to a callable that returns an object of the correct type.
 
-You can map aliases to specific subtrees of Config files. This allows you to either have each object get its own Config file, or have all the objects share the same Config file, or anything in-between. If you specify the same file multiple times, `Injector` will cache that file and only ever load it once into memory.
+As an example, pretty much all of the Bright Nucleus components use Config files to do project-specific work.
 
-__Note__: For this to work, the `Injector` assumes that you pass your Config files through a constructor argument named `$config`, and typehinted to `BrightNucleus\Config\ConfigInterface`.
-
-Config files are defined through the `configFiles` configuration key:
+If you want to map aliases to specific subtrees of Config files, you can do this by providing a callable for each alias. When the `Injector` tries to instantiate that specific alias, it will invoke the corresponding callable and hopefully get a matching Config back.
 
 ```PHP
 // Format:
-//    '<class/interface>' => [
-//        'path'   => '<path & name of config file>',
-//        'subKey' => '<key to fetch for the sub-config>',
+// 'argument' => [
+//    'interface' => '<interface/class that the argument accepts>',
+//    'mappings'  => [
+//        '<alias to provide argument for>' => <callable that returns a matching object>,
 //    ],
-'configFiles' => [
-    'ShortcodeManager' => [
-        'path'   => __DIR__ . '/config/defaults.php',
-        'subKey' => 'BrightNucleus\Example\ShortcodeManager',
-    ]
+// ],
+'argumentProviders' => [
+    'config' => [
+        'interface' => ConfigInterface::class,
+        'mappings'  => [
+            'BrightNucleus\Shortcode\ShortcodeManager' => function ($interface) {
+                return ConfigFactory::createSubConfig(
+                    __DIR__ . '/config/defaults.php',
+                    'Vendor\Package\KeyPrefix'
+                );
+            },
+        ],
+    ],
 ]
 ```
 

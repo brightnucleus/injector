@@ -12,6 +12,7 @@
 namespace BrightNucleus\Injector\Test;
 
 use BrightNucleus\Config\ConfigFactory;
+use BrightNucleus\Config\ConfigInterface;
 use BrightNucleus\Injector\Injector;
 
 /**
@@ -49,21 +50,28 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($objBarA, $objBarB);
     }
 
-    public function testLoadConfigThroughConfigAlias()
+    public function testLoadConfigThroughArgumentAlias()
     {
-        $injector = new Injector(ConfigFactory::create([
-            'standardAliases' => [
+        $injector = new Injector(ConfigFactory::createFromArray([
+            'standardAliases'   => [
                 'BrightNucleus\Config\ConfigInterface' => 'BrightNucleus\Config\Config',
-                'BNFoo'                                => 'BrightNucleus\Injector\Test\ConfigClass',
+                'BNConfigFoo'                          => 'BrightNucleus\Injector\Test\ConfigClass',
             ],
-            'configFiles'     => [
-                'BNFoo' => [
-                    'path'   => __DIR__ . '/fixtures/ConfigFile.php',
-                    'subKey' => 'TestData',
+            'argumentProviders' => [
+                'config' => [
+                    'interface' => ConfigInterface::class,
+                    'mappings'  => [
+                        'BrightNucleus\Injector\Test\ConfigClass' => function ($interface) {
+                            return ConfigFactory::createSubConfig(
+                                __DIR__ . '/fixtures/ConfigFile.php',
+                                'TestData'
+                            );
+                        },
+                    ],
                 ],
             ],
         ]));
-        $obj      = $injector->make('BNFoo');
+        $obj      = $injector->make('BNConfigFoo');
         $this->assertEquals('testValue', $obj->check('randomString'));
         $this->assertEquals('testValue', $obj->check('randomString'));
         $this->assertEquals(42, $obj->check('positiveInteger'));

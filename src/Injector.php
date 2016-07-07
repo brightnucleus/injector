@@ -21,6 +21,8 @@ use BrightNucleus\Config\Exception\InvalidConfigException;
 use BrightNucleus\Config\Loader;
 use BrightNucleus\Injector\Exception\InvalidMappingsException;
 use Exception;
+use ProxyManager\Factory\LazyLoadingValueHolderFactory;
+use ProxyManager\Proxy\LazyLoadingInterface;
 
 /**
  * Class InjectorService.
@@ -39,13 +41,11 @@ class Injector extends AurynInjector implements InjectorInterface
     use ConfigTrait;
 
     /**
-     * Cached contents of the config files.
+     * @var array Argument definitions for the injector to use.
      *
-     * @since 0.1.0
-     *
-     * @var array
+     * @since 0.2.0
      */
-    protected $configFilesCache = [];
+    protected $argumentDefinitions = [];
 
     /**
      * Instantiate a Injector object.
@@ -74,7 +74,7 @@ class Injector extends AurynInjector implements InjectorInterface
      * Takes a ConfigInterface and reads the following keys to add definitions:
      * - 'sharedAliases'
      * - 'standardAliases'
-     * - 'configFiles'
+     * - 'argumentProviders'
      *
      * @since 0.1.0
      *
@@ -86,13 +86,13 @@ class Injector extends AurynInjector implements InjectorInterface
     public function registerMappings(ConfigInterface $config)
     {
         try {
-            $sharedAliases   = $config->hasKey('sharedAliases')
+            $sharedAliases     = $config->hasKey('sharedAliases')
                 ? $config->getKey('sharedAliases') : [];
-            $standardAliases = $config->hasKey('standardAliases')
+            $standardAliases   = $config->hasKey('standardAliases')
                 ? $config->getKey('standardAliases') : [];
-            $configFiles     = $config->hasKey('configFiles')
-                ? $config->getKey('configFiles') : [];
-            $aliases         = array_merge(
+            $argumentProviders = $config->hasKey('argumentProviders')
+                ? $config->getKey('argumentProviders') : [];
+            $aliases           = array_merge(
                 $sharedAliases,
                 $standardAliases
             );
@@ -108,11 +108,13 @@ class Injector extends AurynInjector implements InjectorInterface
         try {
             array_walk($aliases, [$this, 'mapAliases']);
             array_walk($sharedAliases, [$this, 'shareAliases']);
-            array_walk($configFiles, [$this, 'defineConfigFiles']);
+            array_walk($argumentProviders, [$this, 'defineArgumentProviders']);
         } catch (Exception $exception) {
             throw new InvalidMappingsException(
-                'Failed to set up dependency injector: '
-                . $exception->getMessage()
+                sprintf(
+                    _('Failed to set up dependency injector. Reason: "%1$s".'),
+                    $exception->getMessage()
+                )
             );
         }
     }
@@ -151,71 +153,103 @@ class Injector extends AurynInjector implements InjectorInterface
     }
 
     /**
-     * Tell our Injector where to find the config files.
+     * Tell our Injector how to produce requried arguments.
      *
-     * @since 0.1.0
+     * @since 0.2.0
      *
-     * @param string $configSetup Config setup from configuration file.
-     * @param string $interface   Interface to register the config against.
+     * @param string $argumentSetup Argument providers setup from configuration file.
+     * @param string $argument      The argument to provide.
      *
-     * @throws \Auryn\InjectionException   If config instantiation fails.
-     * @throws InvalidConfigException      If the config setup has no path.
-     * @throws FailedToLoadConfigException If the config file could not be loaded.
+     * @throws InvalidMappingsException If a required config key could not be found.
      */
-    protected function defineConfigFiles($configSetup, $interface)
+    protected function defineArgumentProviders($argumentSetup, $argument)
     {
-        if (! array_key_exists('path', $configSetup)) {
-            throw new InvalidConfigException(
+        foreach (['interface', 'mappings'] as $key) {
+            if (array_key_exists($key, $argumentSetup)) {
+                continue;
+            }
+
+            throw new InvalidMappingsException(
                 sprintf(
-                    _('Config file setup is missing path: "%1$s".'),
-                    json_encode($configSetup)
+                    _('Failed to define argument providers for argument "%1$s". '
+                      . 'Reason: The key "%2$s" was not found.'),
+                    $argument,
+                    $key
                 )
             );
         }
-        $configData = $this->fetchConfigData($configSetup['path']);
-        $config     = $this->make(
-            'BrightNucleus\Config\ConfigInterface',
-            [':config' => $configData]
-        );
-        $this->define(
-            $interface,
-            [
-                ':config' => array_key_exists('subKey', $configSetup)
-                    ? $config->getSubConfig($configSetup['subKey'])
-                    : $config,
-            ]
+
+        array_walk(
+            $argumentSetup['mappings'],
+            [$this, 'addArgumentDefinition'],
+            [$argument, $argumentSetup['interface']]
         );
     }
 
     /**
-     * Get the data within a config file.
+     * Add a single argument definition.
      *
-     * We cache the loaded files to avoid loading a file multiple times.
+     * @since 0.2.0
      *
-     * @since 0.1.0
+     * @param callable $callable Callable to execute when
+     * @param string   $alias    Alias to add the argument definition to.
+     * @param string   $args     Additional arguments used for definition. Array containing $argument & $interface.
      *
-     * @param string $path Path to the config file.
-     *
-     * @return array Contents of the config file.
-     * @throws FailedToLoadConfigException If the config file does not exist or is not readable.
-     * @throws FailedToLoadConfigException If the config file could not be loaded.
+     * @throws InvalidMappingsException If $callable is not a callable.
      */
-    protected function fetchConfigData($path)
+    protected function addArgumentDefinition($callable, $alias, $args)
     {
-        if (! is_readable($path)) {
-            throw new FailedToLoadConfigException(
+        list($argument, $interface) = $args;
+
+        if (! is_callable($callable)) {
+            throw new InvalidMappingsException(
                 sprintf(
-                    _('Config file could not be found: "%1$s".'),
-                    json_encode($path)
+                    _('Failed to add argument definition for argument "%1$s". '
+                      . 'Reason: The provided factory is not a callable.'),
+                    $argument
                 )
             );
         }
 
-        if (! array_key_exists($path, $this->configFilesCache)) {
-            $config                        = Loader::load($path);
-            $this->configFilesCache[$path] = $config;
-        }
+        $argumentDefinition = array_key_exists($argument, $this->argumentDefinitions)
+            ? $this->argumentDefinitions[$alias]
+            : [];
 
-        return (array)$this->configFilesCache[$path];
+        $argumentDefinition[":${argument}"] = $this->getArgumentProxy($interface, $callable);
+        $this->argumentDefinitions[$alias]  = $argumentDefinition;
+
+        $this->define($alias, $this->argumentDefinitions[$alias]);
+    }
+
+    /**
+     * Get an argument proxy for a given alias to provide to the injector.
+     *
+     * @since 0.2.0
+     *
+     * @param string   $interface Interface that the proxy implements.
+     * @param callable $callable  Callable used to initialize the proxy.
+     *
+     * @return object Argument proxy to provide to the inspector.
+     */
+    protected function getArgumentProxy($interface, $callable)
+    {
+        $factory     = new LazyLoadingValueHolderFactory();
+        $initializer = function (
+            & $wrappedObject,
+            LazyLoadingInterface $proxy,
+            $method,
+            array $parameters,
+            & $initializer
+        ) use (
+            $interface,
+            $callable
+        ) {
+            $initializer   = null;
+            $wrappedObject = $callable($interface);
+
+            return true;
+        };
+
+        return $factory->createProxy($interface, $initializer);
     }
 }
