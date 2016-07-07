@@ -211,7 +211,7 @@ class Injector extends AurynInjector implements InjectorInterface
             );
         }
 
-        $argumentDefinition = array_key_exists($argument, $this->argumentDefinitions)
+        $argumentDefinition = array_key_exists($alias, $this->argumentDefinitions)
             ? $this->argumentDefinitions[$alias]
             : [];
 

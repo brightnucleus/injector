@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.1] - 2016-07-07
+### Fixed
+- Fixed bug in argument defintions parsing.
+
 ## [0.2.0] - 2016-07-07
 ### Added
 - Added functionality to parse 'argumentProviders' keys, letting you map arbitrary arguments to arbitrary aliases.
@@ -24,6 +28,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release to GitHub.
 
+[0.2.1]: https://github.com/brightnucleus/injector/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/brightnucleus/injector/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/brightnucleus/injector/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/brightnucleus/injector/compare/v0.1.0...v0.1.1
