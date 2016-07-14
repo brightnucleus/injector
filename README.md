@@ -117,10 +117,10 @@ If you want to map aliases to specific subtrees of Config files, you can do this
     'config' => [
         'interface' => ConfigInterface::class,
         'mappings'  => [
-            'BrightNucleus\Shortcode\ShortcodeManager' => function ($interface) {
+            'BrightNucleus\Shortcode\ShortcodeManager' => function ($alias, $interface) {
                 return ConfigFactory::createSubConfig(
                     __DIR__ . '/config/defaults.php',
-                    'Vendor\Package\KeyPrefix'
+                    $alias
                 );
             },
         ],

@@ -21,4 +21,4 @@ $testData = [
 
 ];
 
-return ['TestData' => $testData];
+return ['ConfigClass' => $testData];

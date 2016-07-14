@@ -215,7 +215,7 @@ class Injector extends AurynInjector implements InjectorInterface
             ? $this->argumentDefinitions[$alias]
             : [];
 
-        $argumentDefinition[":${argument}"] = $this->getArgumentProxy($interface, $callable);
+        $argumentDefinition[":${argument}"] = $this->getArgumentProxy($alias, $interface, $callable);
         $this->argumentDefinitions[$alias]  = $argumentDefinition;
 
         $this->define($alias, $this->argumentDefinitions[$alias]);
@@ -226,12 +226,13 @@ class Injector extends AurynInjector implements InjectorInterface
      *
      * @since 0.2.0
      *
+     * @param string   $alias     Alias that needs the argument.
      * @param string   $interface Interface that the proxy implements.
      * @param callable $callable  Callable used to initialize the proxy.
      *
      * @return object Argument proxy to provide to the inspector.
      */
-    protected function getArgumentProxy($interface, $callable)
+    protected function getArgumentProxy($alias, $interface, $callable)
     {
         $factory     = new LazyLoadingValueHolderFactory();
         $initializer = function (
@@ -241,11 +242,12 @@ class Injector extends AurynInjector implements InjectorInterface
             array $parameters,
             & $initializer
         ) use (
+        	$alias,
             $interface,
             $callable
         ) {
             $initializer   = null;
-            $wrappedObject = $callable($interface);
+            $wrappedObject = $callable($alias, $interface);
 
             return true;
         };
