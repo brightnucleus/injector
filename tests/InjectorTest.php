@@ -85,6 +85,19 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $obj->check('negativeBoolean'));
     }
 
+    public function testArgumentDefinitionsThroughConfig()
+    {
+        $injector = new Injector(ConfigFactory::createFromArray([
+            'argumentDefinitions' => [
+                'BrightNucleus\Injector\Test\DependencyWithDefinedParam' => [
+                    'foo' => 42,
+                ],
+            ],
+        ]));
+        $obj      = $injector->make('BrightNucleus\Injector\Test\DependencyWithDefinedParam');
+        $this->assertEquals(42, $obj->foo);
+    }
+
     public function testMakeInstanceInjectsSimpleConcreteDependency()
     {
         $injector = new Injector(ConfigFactory::create([]));

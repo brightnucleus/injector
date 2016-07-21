@@ -97,9 +97,30 @@ Shared aliases are defined through the `sharedAliases` configuration key:
 ]
 ```
 
+### Argument Definitions
+
+The argument definitions allow you to let the `Injector` know what to pass in to arguments when you need to inject scalar values.
+
+```PHP
+// Format:
+//
+// '<alias to provide argument for>' => [
+//    '<argument>' => '<callable or scalar that returns the value>',
+// ],
+'argumentDefinitions' => [
+	'PDO' => [
+		'dsn'      => $dsn,
+		'username' => $username,
+		'passwd'   => $password,
+	]
+]
+```
+
 ### Argument Providers
 
-The argument providers allow you to let the `Injector` know what to pass in to arguments, like `$config` or `$logger`. As these are probably different for each object, we need a way to map them to specific aliases (instead of having one global value to pass in). This is done by mapping each alias to a callable that returns an object of the correct type.
+The argument providers allow you to let the `Injector` know what to pass in to arguments when you need to instantiate objects, like `$config` or `$logger`. As these are probably different for each object, we need a way to map them to specific aliases (instead of having one global value to pass in). This is done by mapping each alias to a callable that returns an object of the correct type.
+
+The Injector will create a light-weight proxy object for each of these. These proxies are instantiated and replaced by the real objects when they are first referenced.
 
 As an example, pretty much all of the Bright Nucleus components use Config files to do project-specific work.
 
@@ -107,7 +128,7 @@ If you want to map aliases to specific subtrees of Config files, you can do this
 
 ```PHP
 // Format:
-// 'argument' => [
+// '<argument>' => [
 //    'interface' => '<interface/class that the argument accepts>',
 //    'mappings'  => [
 //        '<alias to provide argument for>' => <callable that returns a matching object>,

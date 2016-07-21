@@ -86,13 +86,15 @@ class Injector extends AurynInjector implements InjectorInterface
     public function registerMappings(ConfigInterface $config)
     {
         try {
-            $sharedAliases     = $config->hasKey('sharedAliases')
+            $sharedAliases       = $config->hasKey('sharedAliases')
                 ? $config->getKey('sharedAliases') : [];
-            $standardAliases   = $config->hasKey('standardAliases')
+            $standardAliases     = $config->hasKey('standardAliases')
                 ? $config->getKey('standardAliases') : [];
-            $argumentProviders = $config->hasKey('argumentProviders')
+            $argumentDefinitions = $config->hasKey('argumentDefinitions')
+                ? $config->getKey('argumentDefinitions') : [];
+            $argumentProviders   = $config->hasKey('argumentProviders')
                 ? $config->getKey('argumentProviders') : [];
-            $aliases           = array_merge(
+            $aliases             = array_merge(
                 $sharedAliases,
                 $standardAliases
             );
@@ -108,6 +110,7 @@ class Injector extends AurynInjector implements InjectorInterface
         try {
             array_walk($aliases, [$this, 'mapAliases']);
             array_walk($sharedAliases, [$this, 'shareAliases']);
+            array_walk($argumentDefinitions, [$this, 'defineArguments']);
             array_walk($argumentProviders, [$this, 'defineArgumentProviders']);
         } catch (Exception $exception) {
             throw new InvalidMappingsException(
@@ -153,7 +156,24 @@ class Injector extends AurynInjector implements InjectorInterface
     }
 
     /**
-     * Tell our Injector how to produce requried arguments.
+     * Tell our Injector how arguments are defined.
+     *
+     * @since 0.2.0
+     *
+     * @param string $argumentSetup Argument providers setup from configuration file.
+     * @param string $argument      The argument to provide.
+     *
+     * @throws InvalidMappingsException If a required config key could not be found.
+     */
+    protected function defineArguments($argumentSetup, $alias)
+    {
+        foreach ($argumentSetup as $key => $value) {
+            $this->addArgumentDefinition($value, $alias, [$key, null]);
+        }
+    }
+
+    /**
+     * Tell our Injector how to produce required arguments.
      *
      * @since 0.2.0
      *
@@ -164,17 +184,12 @@ class Injector extends AurynInjector implements InjectorInterface
      */
     protected function defineArgumentProviders($argumentSetup, $argument)
     {
-        foreach (['interface', 'mappings'] as $key) {
-            if (array_key_exists($key, $argumentSetup)) {
-                continue;
-            }
-
+        if (! array_key_exists('mappings', $argumentSetup)) {
             throw new InvalidMappingsException(
                 sprintf(
                     _('Failed to define argument providers for argument "%1$s". '
-                      . 'Reason: The key "%2$s" was not found.'),
-                    $argument,
-                    $key
+                      . 'Reason: The key "mappings" was not found.'),
+                    $argument
                 )
             );
         }
@@ -182,7 +197,7 @@ class Injector extends AurynInjector implements InjectorInterface
         array_walk(
             $argumentSetup['mappings'],
             [$this, 'addArgumentDefinition'],
-            [$argument, $argumentSetup['interface']]
+            [$argument, $argumentSetup['interface'] ?: null]
         );
     }
 
@@ -191,7 +206,7 @@ class Injector extends AurynInjector implements InjectorInterface
      *
      * @since 0.2.0
      *
-     * @param callable $callable Callable to execute when
+     * @param callable $callable Callable to execute when the argument is needed.
      * @param string   $alias    Alias to add the argument definition to.
      * @param string   $args     Additional arguments used for definition. Array containing $argument & $interface.
      *
@@ -201,21 +216,15 @@ class Injector extends AurynInjector implements InjectorInterface
     {
         list($argument, $interface) = $args;
 
-        if (! is_callable($callable)) {
-            throw new InvalidMappingsException(
-                sprintf(
-                    _('Failed to add argument definition for argument "%1$s". '
-                      . 'Reason: The provided factory is not a callable.'),
-                    $argument
-                )
-            );
-        }
+        $value = is_callable($callable)
+            ? $this->getArgumentProxy($alias, $interface, $callable)
+            : $callable;
 
         $argumentDefinition = array_key_exists($alias, $this->argumentDefinitions)
             ? $this->argumentDefinitions[$alias]
             : [];
 
-        $argumentDefinition[":${argument}"] = $this->getArgumentProxy($alias, $interface, $callable);
+        $argumentDefinition[":${argument}"] = $value;
         $this->argumentDefinitions[$alias]  = $argumentDefinition;
 
         $this->define($alias, $this->argumentDefinitions[$alias]);
@@ -234,6 +243,10 @@ class Injector extends AurynInjector implements InjectorInterface
      */
     protected function getArgumentProxy($alias, $interface, $callable)
     {
+        if ( null === $interface ) {
+            $interface = 'stdClass';
+        }
+
         $factory     = new LazyLoadingValueHolderFactory();
         $initializer = function (
             & $wrappedObject,
@@ -242,7 +255,7 @@ class Injector extends AurynInjector implements InjectorInterface
             array $parameters,
             & $initializer
         ) use (
-        	$alias,
+            $alias,
             $interface,
             $callable
         ) {
