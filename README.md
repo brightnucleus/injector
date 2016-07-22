@@ -15,7 +15,9 @@ This is an extension of the [Auryn](https://github.com/rdlowrey/auryn) dependenc
 * [Basic Usage](#basic-usage)
     * [Standard Aliases](#standard-aliases)
     * [Shared Aliases](#shared-aliases)
+    * [Argument Definitions](#argument-definitions)
     * [Argument Providers](#argument-providers)
+    * [Preparations](#preparations)
 * [Registering Additional Mappings](#registering-additional-mappings)
 * [Contributing](#contributing)
 * [License](#license)
@@ -146,6 +148,26 @@ If you want to map aliases to specific subtrees of Config files, you can do this
             },
         ],
     ],
+]
+```
+
+### Preparations
+
+The preparations allow you to let the `Injector` define additional preparation steps that need to be done after instantiation, but before the object if actually used.
+
+The callable will receive two arguments, the object to prepare, as well as a reference to the injector.
+
+```PHP
+// Format:
+//    '<alias>' => <callable to execute after instantiation>
+'preparations' => [
+	'PDO' => function ( $instance, $injector ) {
+		/** @var $instance PDO */
+		$instance->setAttribute(
+			PDO::ATTR_DEFAULT_FETCH_MODE,
+			PDO::FETCH_OBJ
+		);
+	},
 ]
 ```
 

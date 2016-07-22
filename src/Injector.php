@@ -74,7 +74,9 @@ class Injector extends AurynInjector implements InjectorInterface
      * Takes a ConfigInterface and reads the following keys to add definitions:
      * - 'sharedAliases'
      * - 'standardAliases'
+     * - 'argumentDefinitions'
      * - 'argumentProviders'
+     * - 'preparations'
      *
      * @since 0.1.0
      *
@@ -85,16 +87,19 @@ class Injector extends AurynInjector implements InjectorInterface
      */
     public function registerMappings(ConfigInterface $config)
     {
+        $configKeys = [
+            'standardAliases'     => 'mapAliases',
+            'sharedAliases'       => 'shareAliases',
+            'argumentDefinitions' => 'defineArguments',
+            'argumentProviders'   => 'defineArgumentProviders',
+            'preparations'        => 'definePreparations',
+        ];
         try {
-            $sharedAliases       = $config->hasKey('sharedAliases')
-                ? $config->getKey('sharedAliases') : [];
-            $standardAliases     = $config->hasKey('standardAliases')
-                ? $config->getKey('standardAliases') : [];
-            $argumentDefinitions = $config->hasKey('argumentDefinitions')
-                ? $config->getKey('argumentDefinitions') : [];
-            $argumentProviders   = $config->hasKey('argumentProviders')
-                ? $config->getKey('argumentProviders') : [];
-            $aliases             = array_merge(
+            foreach ($configKeys as $key => $method) {
+                $$key = $config->hasKey($key)
+                    ? $config->getKey($key) : [];
+            }
+            $standardAliases = array_merge(
                 $sharedAliases,
                 $standardAliases
             );
@@ -108,10 +113,9 @@ class Injector extends AurynInjector implements InjectorInterface
         }
 
         try {
-            array_walk($aliases, [$this, 'mapAliases']);
-            array_walk($sharedAliases, [$this, 'shareAliases']);
-            array_walk($argumentDefinitions, [$this, 'defineArguments']);
-            array_walk($argumentProviders, [$this, 'defineArgumentProviders']);
+            foreach ($configKeys as $key => $method) {
+                array_walk($$key, [$this, $method]);
+            }
         } catch (Exception $exception) {
             throw new InvalidMappingsException(
                 sprintf(
@@ -158,10 +162,10 @@ class Injector extends AurynInjector implements InjectorInterface
     /**
      * Tell our Injector how arguments are defined.
      *
-     * @since 0.2.0
+     * @since 0.2.3
      *
-     * @param string $argumentSetup Argument providers setup from configuration file.
-     * @param string $argument      The argument to provide.
+     * @param array  $argumentSetup Argument providers setup from configuration file.
+     * @param string $alias         The alias for which to define the argument.
      *
      * @throws InvalidMappingsException If a required config key could not be found.
      */
@@ -170,6 +174,21 @@ class Injector extends AurynInjector implements InjectorInterface
         foreach ($argumentSetup as $key => $value) {
             $this->addArgumentDefinition($value, $alias, [$key, null]);
         }
+    }
+
+    /**
+     * Tell our Injector what preparations need to be done.
+     *
+     * @since 0.2.4
+     *
+     * @param callable $preparation Preparation to execute on instantiation.
+     * @param string   $alias       The alias for which to define the preparation.
+     *
+     * @throws InvalidMappingsException If a required config key could not be found.
+     */
+    protected function definePreparations(callable $preparation, $alias)
+    {
+        $this->prepare($alias, $preparation);
     }
 
     /**
@@ -243,7 +262,7 @@ class Injector extends AurynInjector implements InjectorInterface
      */
     protected function getArgumentProxy($alias, $interface, $callable)
     {
-        if ( null === $interface ) {
+        if (null === $interface) {
             $interface = 'stdClass';
         }
 

@@ -98,6 +98,24 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(42, $obj->foo);
     }
 
+    public function testPreparationsThroughConfig()
+    {
+        $injector = new Injector(ConfigFactory::createFromArray([
+            'preparations' => [
+            	'\StdClass' => function ($obj, $injector) {
+                    $obj->testval = 42;
+                },
+                'BrightNucleus\Injector\Test\SomeInterface' => function ($obj, $injector) {
+                    $obj->testProp = 42;
+                },
+            ],
+        ]));
+        $obj1 = $injector->make('StdClass');
+        $this->assertSame(42, $obj1->testval);
+        $obj2 = $injector->make('BrightNucleus\Injector\Test\PreparesImplementationTest');
+        $this->assertSame(42, $obj2->testProp);
+    }
+
     public function testMakeInstanceInjectsSimpleConcreteDependency()
     {
         $injector = new Injector(ConfigFactory::create([]));

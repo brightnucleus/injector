@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.4] - 2016-07-22
+### Added
+- Added support for `'preparations'` key.
+
 ## [0.2.3] - 2016-07-21
 ### Added
 - Added support for `'argumentDefinitions'` key.
@@ -36,6 +40,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release to GitHub.
 
+[0.2.4]: https://github.com/brightnucleus/injector/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/brightnucleus/injector/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/brightnucleus/injector/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/brightnucleus/injector/compare/v0.2.0...v0.2.1
