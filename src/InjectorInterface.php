@@ -130,6 +130,7 @@ interface InjectorInterface
      * - 'standardAliases'
      * - 'argumentDefinitions'
      * - 'argumentProviders'
+     * - 'delegations'
      * - 'preparations'
      *
      * @since 0.1.0

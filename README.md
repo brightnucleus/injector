@@ -1,13 +1,21 @@
 # Bright Nucleus Injector Component
 
-> Config-driven extension of Auryn Dependency Injector.
+> Config-driven Dependency Injector, based in large parts on Auryn.
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/brightnucleus/injector.svg)](https://packagist.org/packages/brightnucleus/injector)
 [![Total Downloads](https://img.shields.io/packagist/dt/brightnucleus/injector.svg)](https://packagist.org/packages/brightnucleus/injector)
 [![Latest Unstable Version](https://img.shields.io/packagist/vpre/brightnucleus/injector.svg)](https://packagist.org/packages/brightnucleus/injector)
 [![License](https://img.shields.io/packagist/l/brightnucleus/injector.svg)](https://packagist.org/packages/brightnucleus/injector)
 
-This is an extension of the [Auryn](https://github.com/rdlowrey/auryn) dependency injector, to allow easy registration of alias mappings through the [`brightnucleus/config`](https://github.com/brightnucleus/config) component.
+This is a config-driven dependency injector, to allow easy registration of alias mappings through the [`brightnucleus/config`](https://github.com/brightnucleus/config) component.
+
+It includes large parts of code from the `rdlowrey/auryn`(#https://github.com/rdlowrey/auryn) package.
+
+Notable changes compared to Auryn:
+
+* Injector configuration can be done through a Config file.
+* Aliases are case-sensitive.
+* Closures can receive an `InjectionChain` object that let you iterate over the instantiation hierarchy.
 
 ## Table Of Contents
 
@@ -17,6 +25,7 @@ This is an extension of the [Auryn](https://github.com/rdlowrey/auryn) dependenc
     * [Shared Aliases](#shared-aliases)
     * [Argument Definitions](#argument-definitions)
     * [Argument Providers](#argument-providers)
+    * [Delegations](#delegations)
     * [Preparations](#preparations)
 * [Registering Additional Mappings](#registering-additional-mappings)
 * [Contributing](#contributing)
@@ -32,7 +41,7 @@ composer require brightnucleus/injector
 
 ## Basic Usage
 
-> This documentation only deals with passing in mappings through a `Config` file. For documentation of the actual dependency injection functionality, refer to the [Auryn README](https://github.com/rdlowrey/auryn/blob/master/README.md).
+> This documentation only deals with passing in mappings through a `Config` file. Documentation for the basic methods still needs to be synced. For now, just refer to the [Auryn README](https://github.com/rdlowrey/auryn/blob/master/README.md) for these..
 
 The Bright Nucleus Injector expects to get an object through its constructor that implements the `BrightNucleus\Config\ConfigInterface`. You need to pass in the correct "sub-configuration", so that the keys that the `Injector` is looking for are found at the root level.
 
@@ -148,6 +157,33 @@ If you want to map aliases to specific subtrees of Config files, you can do this
             },
         ],
     ],
+]
+```
+
+### Delegations
+
+The delegations allow you to let the `Injector` delegate the instantiation for a given alias to a provided factory. The factory can be any callable that will return an object that is of a matching type to satisfy the alias.
+
+If you need to act on the injection chain, like finding out what the object is for which you currently need to instantiate a dependency, add a `BrightNucleus\Injector\InjectionChain $injectionChain` argument to your factory callable. You will then be able to query the passed-in injection chain. To query the injection chain, pass the index you want to fetch into `InjectionChain::getByIndex($index)`. If you provide a negative index, you will get the nth element starting from the end of the queue counting backwards.
+
+As an example, consider an `ExampleClass` with a constructor `__construct( ExampleDependency $dependency )`. The injection chain would be the following (in `namespace Example\Namespace`) :
+
+```
+[0] => 'Example\Namespace\ExampleClass'
+[1] => 'Example\Namespace\ExampleDependency'
+```
+
+So, in the example below, we use `getByIndex(-2)` to fetch the second-to-last element from the list of injections.
+
+```PHP
+// Format:
+//    '<alias>' => <callable to use as factory>
+'delegations' => [
+	'Example\Namespace\ExampleDependency' => function ( InjectionChain $injectionChain ) {
+		$parent = $injectionChain->getByIndex(-2);
+		$factory = new \Example\Namespace\ExampleFactory();
+		return $factory->createFor( $parent );
+	},
 ]
 ```
 

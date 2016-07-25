@@ -101,6 +101,19 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(42, $obj->foo);
     }
 
+    public function testDelegationsThroughConfig()
+    {
+        $injector = new Injector(ConfigFactory::createFromArray([
+            'delegations' => [
+                'stdClass' => function () {
+                    return new SomeClassName();
+                },
+            ],
+        ]));
+        $obj      = $injector->make('stdClass');
+        $this->assertInstanceOf(SomeClassName::class, $obj);
+    }
+
     public function testPreparationsThroughConfig()
     {
         $injector = new Injector(ConfigFactory::createFromArray([
@@ -1309,11 +1322,11 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     {
 
         $fn = function (InjectionChain $ic) {
-            if ($ic->getByIndex(-3) ===
+            if ($ic->getByIndex(-2) ===
                 'BrightNucleus\Injector\Test\InjectionChainTestDependency'
             ) {
                 return new InjectionChainValue('Value for dependency');
-            } else if ($ic->getByIndex(-3) ===
+            } else if ($ic->getByIndex(-2) ===
                        'BrightNucleus\Injector\Test\InjectionChainTest'
             ) {
                 return new InjectionChainValue('Value for parent');

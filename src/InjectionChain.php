@@ -42,7 +42,10 @@ class InjectionChain
      */
     public function __construct(array $inProgressMakes = [])
     {
+        // Swap class names and indexes around.
         $this->chain = array_flip($inProgressMakes);
+        // Remove the BrightNucleus\Injector\InjectionChain class.
+        array_pop($this->chain);
     }
 
     /**

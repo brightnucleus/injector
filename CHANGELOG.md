@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.3.0] - 2016-07-25
 ### Added
+- Added support for `'delegations'` key.
 - The instantiation chain can be queried from within delegate closures.
 
 ### Changed
@@ -48,6 +49,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release to GitHub.
 
+[0.3.0]: https://github.com/brightnucleus/injector/compare/v0.2.4...v0.3.0
 [0.2.4]: https://github.com/brightnucleus/injector/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/brightnucleus/injector/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/brightnucleus/injector/compare/v0.2.1...v0.2.2

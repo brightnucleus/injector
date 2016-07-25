@@ -56,6 +56,7 @@ class Injector implements InjectorInterface
     const K_SHARED_ALIASES       = 'sharedAliases';
     const K_ARGUMENT_DEFINITIONS = 'argumentDefinitions';
     const K_ARGUMENT_PROVIDERS   = 'argumentProviders';
+    const K_DELEGATIONS          = 'delegations';
     const K_PREPARATIONS         = 'preparations';
 
     protected $reflector;
@@ -110,6 +111,7 @@ class Injector implements InjectorInterface
      * - 'standardAliases'
      * - 'argumentDefinitions'
      * - 'argumentProviders'
+     * - 'delegations'
      * - 'preparations'
      *
      * @since 0.1.0
@@ -126,6 +128,7 @@ class Injector implements InjectorInterface
             static::K_SHARED_ALIASES       => 'shareAliases',
             static::K_ARGUMENT_DEFINITIONS => 'defineArguments',
             static::K_ARGUMENT_PROVIDERS   => 'defineArgumentProviders',
+            static::K_DELEGATIONS          => 'defineDelegations',
             static::K_PREPARATIONS         => 'definePreparations',
         ];
         try {
@@ -208,6 +211,21 @@ class Injector implements InjectorInterface
         foreach ($argumentSetup as $key => $value) {
             $this->addArgumentDefinition($value, $alias, [$key, null]);
         }
+    }
+
+    /**
+     * Tell our Injector what instantiations are delegated to factories.
+     *
+     * @since 0.3.0
+     *
+     * @param callable $factory Factory that will take care of the instantiation.
+     * @param string   $alias   The alias for which to define the delegation.
+     *
+     * @throws ConfigException If the delegation could not be configured.
+     */
+    protected function defineDelegations(callable $factory, $alias)
+    {
+        $this->delegate($alias, $factory);
     }
 
     /**
