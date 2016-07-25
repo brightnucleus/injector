@@ -177,7 +177,7 @@ You can register additional mappings at any time by simply passing additional Co
 
 ```PHP
 $config = ConfigFactory::create([
-    'standardAliases => [
+    'standardAliases' => [
         'ExampleInterface' => 'ConcreteExample'
     ]
 ]);

@@ -13,13 +13,16 @@ namespace BrightNucleus\Injector\Test;
 
 use BrightNucleus\Config\ConfigFactory;
 use BrightNucleus\Config\ConfigInterface;
+use BrightNucleus\Injector\Exception\InjectionException;
+use BrightNucleus\Injector\InjectionChain;
 use BrightNucleus\Injector\Injector;
+use BrightNucleus\Injector\Exception\InjectorException;
+use stdClass;
 
 /**
  * Class InjectorTest.
  *
- * Most of these tests are taken as is from the original Auryn injector. We
- * re-run these here to test for regressions.
+ * Most of these tests are taken from the original Auryn injector and modified to work with the refactoring.
  *
  * @since   0.1.0
  *
@@ -102,7 +105,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     {
         $injector = new Injector(ConfigFactory::createFromArray([
             'preparations' => [
-            	'\StdClass' => function ($obj, $injector) {
+                'stdClass'                                  => function ($obj, $injector) {
                     $obj->testval = 42;
                 },
                 'BrightNucleus\Injector\Test\SomeInterface' => function ($obj, $injector) {
@@ -110,7 +113,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
                 },
             ],
         ]));
-        $obj1 = $injector->make('StdClass');
+        $obj1     = $injector->make('stdClass');
         $this->assertSame(42, $obj1->testval);
         $obj2 = $injector->make('BrightNucleus\Injector\Test\PreparesImplementationTest');
         $this->assertSame(42, $obj2->testProp);
@@ -141,8 +144,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Auryn\InjectionException
-     * @expectedExceptionCode \Auryn\Injector::E_NEEDS_DEFINITION
+     * @expectedException \BrightNucleus\Injector\Exception\InjectionException
+     * @expectedExceptionCode \BrightNucleus\Injector\Exception\InjectorException::E_NEEDS_DEFINITION
      */
     public function testMakeInstanceThrowsExceptionOnInterfaceWithoutAlias()
     {
@@ -151,8 +154,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Auryn\InjectionException
-     * @expectedExceptionCode \Auryn\Injector::E_NEEDS_DEFINITION
+     * @expectedException \BrightNucleus\Injector\Exception\InjectionException
+     * @expectedExceptionCode \BrightNucleus\Injector\Exception\InjectorException::E_NEEDS_DEFINITION
      */
     public function testMakeInstanceThrowsExceptionOnNonConcreteCtorParamWithoutImplementation()
     {
@@ -194,7 +197,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Auryn\InjectorException
+     * @expectedException \BrightNucleus\Injector\Exception\InjectorException
      */
     public function testMakeInstanceThrowsExceptionOnClassLoadFailure()
     {
@@ -249,8 +252,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Auryn\InjectionException
-     * @expectedExceptionCode \Auryn\Injector::E_UNDEFINED_PARAM
+     * @expectedException \BrightNucleus\Injector\Exception\InjectionException
+     * @expectedExceptionCode \BrightNucleus\Injector\Exception\InjectorException::E_UNDEFINED_PARAM
      */
     public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithoutDefinitionOrDefault()
     {
@@ -260,8 +263,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Auryn\InjectionException
-     * @expectedExceptionCode \Auryn\Injector::E_UNDEFINED_PARAM
+     * @expectedException \BrightNucleus\Injector\Exception\InjectionException
+     * @expectedExceptionCode \BrightNucleus\Injector\Exception\InjectorException::E_UNDEFINED_PARAM
      */
     public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithoutDefinitionOrDefaultThroughAliasedTypehint(
     )
@@ -274,7 +277,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @TODO
-     * @expectedException Auryn\InjectorException
+     * @expectedException \BrightNucleus\Injector\Exception\InjectorException
      */
     public function testMakeInstanceThrowsExceptionOnUninstantiableTypehintWithoutDefinition()
     {
@@ -310,7 +313,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
         $injector->define('BrightNucleus\Injector\Test\InjectorTestRawCtorParams',
             array(
                 ':string' => 'string',
-                ':obj'    => new \StdClass,
+                ':obj'    => new stdClass,
                 ':int'    => 42,
                 ':array'  => array(),
                 ':float'  => 9.3,
@@ -320,7 +323,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
 
         $obj = $injector->make('BrightNucleus\Injector\Test\InjectorTestRawCtorParams');
         $this->assertInternalType('string', $obj->string);
-        $this->assertInstanceOf('StdClass', $obj->obj);
+        $this->assertInstanceOf('stdClass', $obj->obj);
         $this->assertInternalType('int', $obj->int);
         $this->assertInternalType('array', $obj->array);
         $this->assertInternalType('float', $obj->float);
@@ -379,33 +382,33 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     public function testMakeInstanceWithStringDelegate()
     {
         $injector = new Injector(ConfigFactory::create([]));
-        $injector->delegate('StdClass',
-            'BrightNucleus\Injector\Test\StringStdClassDelegateMock');
-        $obj = $injector->make('StdClass');
+        $injector->delegate('stdClass',
+            'BrightNucleus\Injector\Test\StringstdClassDelegateMock');
+        $obj = $injector->make('stdClass');
         $this->assertEquals(42, $obj->test);
     }
 
     /**
-     * @expectedException Auryn\ConfigException
+     * @expectedException \BrightNucleus\Injector\Exception\ConfigException
      */
     public function testMakeInstanceThrowsExceptionIfStringDelegateClassHasNoInvokeMethod()
     {
         $injector = new Injector(ConfigFactory::create([]));
-        $injector->delegate('StdClass', 'StringDelegateWithNoInvokeMethod');
+        $injector->delegate('stdClass', 'StringDelegateWithNoInvokeMethod');
     }
 
     /**
-     * @expectedException Auryn\ConfigException
+     * @expectedException \BrightNucleus\Injector\Exception\ConfigException
      */
     public function testMakeInstanceThrowsExceptionIfStringDelegateClassInstantiationFails()
     {
         $injector = new Injector(ConfigFactory::create([]));
-        $injector->delegate('StdClass',
+        $injector->delegate('stdClass',
             'SomeClassThatDefinitelyDoesNotExistForReal');
     }
 
     /**
-     * @expectedException \Auryn\InjectionException
+     * @expectedException \BrightNucleus\Injector\Exception\InjectionException
      */
     public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithNoDefinition()
     {
@@ -426,24 +429,24 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     public function testShareStoresSharedInstanceAndReturnsCurrentInstance()
     {
         $injector        = new Injector(ConfigFactory::create([]));
-        $testShare       = new \StdClass;
+        $testShare       = new stdClass;
         $testShare->test = 42;
 
-        $this->assertInstanceOf('Auryn\Injector',
+        $this->assertInstanceOf('BrightNucleus\Injector\Injector',
             $injector->share($testShare));
         $testShare->test = 'test';
-        $this->assertEquals('test', $injector->make('stdclass')->test);
+        $this->assertEquals('test', $injector->make('stdClass')->test);
     }
 
     public function testShareMarksClassSharedOnNullObjectParameter()
     {
         $injector = new Injector(ConfigFactory::create([]));
-        $this->assertInstanceOf('Auryn\Injector',
+        $this->assertInstanceOf('BrightNucleus\Injector\Injector',
             $injector->share('SomeClass'));
     }
 
     /**
-     * @expectedException \Auryn\ConfigException
+     * @expectedException \BrightNucleus\Injector\Exception\ConfigException
      */
     public function testShareThrowsExceptionOnInvalidArgument()
     {
@@ -454,7 +457,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     public function testAliasAssignsValueAndReturnsCurrentInstance()
     {
         $injector = new Injector(ConfigFactory::create([]));
-        $this->assertInstanceOf('Auryn\Injector',
+        $this->assertInstanceOf('BrightNucleus\Injector\Injector',
             $injector->alias('DepInterface',
                 'BrightNucleus\Injector\Test\DepImplementation'));
     }
@@ -462,7 +465,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     public function provideInvalidDelegates()
     {
         return array(
-            array(new \StdClass),
+            array(new stdClass),
             array(42),
             array(true),
         );
@@ -470,7 +473,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideInvalidDelegates
-     * @expectedException Auryn\ConfigException
+     * @expectedException \BrightNucleus\Injector\Exception\ConfigException
      */
     public function testDelegateThrowsExceptionIfDelegateIsNotCallableOrString($badDelegate)
     {
@@ -505,9 +508,10 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
         try {
             $injector->delegate('BrightNucleus\Injector\Test\DelegatableInterface', 'FunctionWhichDoesNotExist');
             $this->fail("Delegation was supposed to fail.");
-        } catch (\Auryn\InjectorException $ie) {
+        } catch (InjectorException $ie) {
             $this->assertContains('FunctionWhichDoesNotExist', $ie->getMessage());
-            $this->assertEquals(\Auryn\Injector::E_DELEGATE_ARGUMENT, $ie->getCode());
+            $this->assertEquals(InjectorException::E_DELEGATE_ARGUMENT,
+                $ie->getCode());
         }
     }
 
@@ -518,10 +522,10 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
             $injector->delegate('BrightNucleus\Injector\Test\DelegatableInterface',
                 array('stdClass', 'methodWhichDoesNotExist'));
             $this->fail("Delegation was supposed to fail.");
-        } catch (\Auryn\InjectorException $ie) {
+        } catch (InjectorException $ie) {
             $this->assertContains('stdClass', $ie->getMessage());
             $this->assertContains('methodWhichDoesNotExist', $ie->getMessage());
-            $this->assertEquals(\Auryn\Injector::E_DELEGATE_ARGUMENT, $ie->getCode());
+            $this->assertEquals(InjectorException::E_DELEGATE_ARGUMENT, $ie->getCode());
         }
     }
 
@@ -694,7 +698,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
         if (PHP_VERSION_ID > 50400) {
             // 19 ------------------------------------------------------------------------------------->
 
-            $object         = new \BrightNucleus\Injector\Test\ReturnsCallable('new value');
+            $object         = new ReturnsCallable('new value');
             $args           = array();
             $toInvoke       = $object->getCallable();
             $expectedResult = 'new value';
@@ -708,7 +712,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
 
     public function testStaticStringInvokableWithArgument()
     {
-        $injector  = new \Auryn\Injector;
+        $injector  = new Injector(ConfigFactory::create([]));
         $invokable = $injector->buildExecutable('BrightNucleus\Injector\Test\ClassWithStaticMethodThatTakesArg::doSomething');
         $this->assertEquals(42, $invokable(41));
     }
@@ -724,7 +728,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Auryn\InjectorException
+     * @expectedException \BrightNucleus\Injector\Exception\InjectorException
      */
     public function testMissingAlias()
     {
@@ -801,10 +805,10 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     public function testMultipleShareCallsDontOverrideTheOriginalSharedInstance()
     {
         $injector = new Injector(ConfigFactory::create([]));
-        $injector->share('StdClass');
-        $stdClass1 = $injector->make('StdClass');
-        $injector->share('StdClass');
-        $stdClass2 = $injector->make('StdClass');
+        $injector->share('stdClass');
+        $stdClass1 = $injector->make('stdClass');
+        $injector->share('stdClass');
+        $stdClass2 = $injector->make('stdClass');
         $this->assertSame($stdClass1, $stdClass2);
     }
 
@@ -854,8 +858,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideCyclicDependencies
-     * @expectedException \Auryn\InjectionException
-     * @expectedExceptionCode \Auryn\Injector::E_CYCLIC_DEPENDENCY
+     * @expectedException \BrightNucleus\Injector\Exception\InjectionException
+     * @expectedExceptionCode \BrightNucleus\Injector\Exception\InjectorException::E_CYCLIC_DEPENDENCY
      */
     public function testCyclicDependencies($class)
     {
@@ -901,21 +905,21 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($instance->dependency);
 
         //Instance is explicitly shared, $instance is used for dependency
-        $instance = new \StdClass();
+        $instance = new stdClass();
         $injector->share($instance);
         $instance = $injector->make('BrightNucleus\Injector\Test\ConcreteDependencyWithDefaultValue');
-        $this->assertInstanceOf('StdClass', $instance->dependency);
+        $this->assertInstanceOf('stdClass', $instance->dependency);
     }
 
     /**
-     * @expectedException \Auryn\ConfigException
-     * @expectedExceptionCode \Auryn\Injector::E_ALIASED_CANNOT_SHARE
+     * @expectedException \BrightNucleus\Injector\Exception\ConfigException
+     * @expectedExceptionCode \BrightNucleus\Injector\Exception\InjectorException::E_ALIASED_CANNOT_SHARE
      */
     public function testShareAfterAliasException()
     {
         $injector  = new Injector(ConfigFactory::create([]));
-        $testClass = new \StdClass();
-        $injector->alias('StdClass', 'BrightNucleus\Injector\Test\SomeOtherClass');
+        $testClass = new stdClass();
+        $injector->alias('stdClass', 'BrightNucleus\Injector\Test\SomeOtherClass');
         $injector->share($testClass);
     }
 
@@ -952,20 +956,20 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Auryn\ConfigException
-     * @expectedExceptionCode \Auryn\Injector::E_SHARED_CANNOT_ALIAS
+     * @expectedException \BrightNucleus\Injector\Exception\ConfigException
+     * @expectedExceptionCode \BrightNucleus\Injector\Exception\InjectorException::E_SHARED_CANNOT_ALIAS
      */
     public function testAliasAfterShareException()
     {
         $injector  = new Injector(ConfigFactory::create([]));
-        $testClass = new \StdClass();
+        $testClass = new stdClass();
         $injector->share($testClass);
-        $injector->alias('StdClass', 'BrightNucleus\Injector\Test\SomeOtherClass');
+        $injector->alias('stdClass', 'BrightNucleus\Injector\Test\SomeOtherClass');
     }
 
     /**
-     * @expectedException \Auryn\InjectionException
-     * @expectedExceptionCode \Auryn\Injector::E_NON_PUBLIC_CONSTRUCTOR
+     * @expectedException \BrightNucleus\Injector\Exception\InjectionException
+     * @expectedExceptionCode \BrightNucleus\Injector\Exception\InjectorException::E_NON_PUBLIC_CONSTRUCTOR
      */
     public function testAppropriateExceptionThrownOnNonPublicConstructor()
     {
@@ -974,8 +978,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Auryn\InjectionException
-     * @expectedExceptionCode \Auryn\Injector::E_NON_PUBLIC_CONSTRUCTOR
+     * @expectedException \BrightNucleus\Injector\Exception\InjectionException
+     * @expectedExceptionCode \BrightNucleus\Injector\Exception\InjectorException::E_NON_PUBLIC_CONSTRUCTOR
      */
     public function testAppropriateExceptionThrownOnNonPublicConstructorWithArgs()
     {
@@ -987,9 +991,9 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     {
         $injector = new Injector(ConfigFactory::create([]));
         $this->setExpectedException(
-            'Auryn\InjectionException',
+            'BrightNucleus\Injector\Exception\InjectionException',
             'nonExistentFunction',
-            \Auryn\Injector::E_INVOKABLE
+            InjectorException::E_INVOKABLE
         );
         $injector->buildExecutable('nonExistentFunction');
     }
@@ -997,11 +1001,11 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     public function testMakeExecutableFailsOnNonExistentInstanceMethod()
     {
         $injector = new Injector(ConfigFactory::create([]));
-        $object   = new \StdClass();
+        $object   = new stdClass();
         $this->setExpectedException(
-            'Auryn\InjectionException',
+            'BrightNucleus\Injector\Exception\InjectionException',
             "[object(stdClass), 'nonExistentMethod']",
-            \Auryn\Injector::E_INVOKABLE
+            InjectorException::E_INVOKABLE
         );
         $injector->buildExecutable(array($object, 'nonExistentMethod'));
     }
@@ -1010,27 +1014,27 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     {
         $injector = new Injector(ConfigFactory::create([]));
         $this->setExpectedException(
-            'Auryn\InjectionException',
-            "StdClass::nonExistentMethod",
-            \Auryn\Injector::E_INVOKABLE
+            'BrightNucleus\Injector\Exception\InjectionException',
+            "stdClass::nonExistentMethod",
+            InjectorException::E_INVOKABLE
         );
-        $injector->buildExecutable(array('StdClass', 'nonExistentMethod'));
+        $injector->buildExecutable(array('stdClass', 'nonExistentMethod'));
     }
 
     /**
-     * @expectedException \Auryn\InjectionException
-     * @expectedExceptionCode \Auryn\Injector::E_INVOKABLE
+     * @expectedException \BrightNucleus\Injector\Exception\InjectionException
+    \BrightNucleus\Injector\Exception\InjectorException::E_INVOKABLE
      */
     public function testMakeExecutableFailsOnClassWithoutInvoke()
     {
         $injector = new Injector(ConfigFactory::create([]));
-        $object   = new \StdClass();
+        $object   = new stdClass();
         $injector->buildExecutable($object);
     }
 
     /**
-     * @expectedException \Auryn\ConfigException
-     * @expectedExceptionCode \Auryn\Injector::E_NON_EMPTY_STRING_ALIAS
+     * @expectedException \BrightNucleus\Injector\Exception\ConfigException
+     * @expectedExceptionCode \BrightNucleus\Injector\Exception\InjectorException::E_NON_EMPTY_STRING_ALIAS
      */
     public function testBadAlias()
     {
@@ -1058,10 +1062,10 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     public function testShareWithBackslashAndMakeWithoutBackslash()
     {
         $injector = new Injector(ConfigFactory::create([]));
-        $injector->share('\StdClass');
-        $classA         = $injector->make('StdClass');
+        $injector->share('stdClass');
+        $classA         = $injector->make('stdClass');
         $classA->tested = false;
-        $classB         = $injector->make('\StdClass');
+        $classB         = $injector->make('stdClass');
         $classB->tested = true;
 
         $this->assertEquals($classA->tested, $classB->tested);
@@ -1070,10 +1074,10 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     public function testInstanceMutate()
     {
         $injector = new Injector(ConfigFactory::create([]));
-        $injector->prepare('\StdClass', function ($obj, $injector) {
+        $injector->prepare('stdClass', function ($obj, $injector) {
             $obj->testval = 42;
         });
-        $obj = $injector->make('StdClass');
+        $obj = $injector->make('stdClass');
 
         $this->assertSame(42, $obj->testval);
     }
@@ -1094,8 +1098,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
      * Test that custom definitions are not passed through to dependencies.
      * Surprising things would happen if this did occur.
      *
-     * @expectedException \Auryn\InjectionException
-     * @expectedExceptionCode \Auryn\Injector::E_UNDEFINED_PARAM
+     * @expectedException \BrightNucleus\Injector\Exception\InjectionException
+     * @expectedExceptionCode \BrightNucleus\Injector\Exception\InjectorException::E_UNDEFINED_PARAM
      */
     public function testCustomDefinitionNotPassedThrough()
     {
@@ -1154,7 +1158,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
      * Test coverage for delegate closures that are defined outside
      * of a class.ph
      *
-     * @throws \Auryn\ConfigException
+     * @throws \BrightNucleus\Injector\Exception\ConfigException
      */
     public function testDelegateClosure()
     {
@@ -1181,7 +1185,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
         $injector = new Injector(ConfigFactory::create([]));
 
         $fn = function () {
-            return new \BrightNucleus\Injector\Test\ConcreteExexcuteTest();
+            return new ConcreteExexcuteTest();
         };
 
         $injector->delegate('BrightNucleus\Injector\Test\AbstractExecuteTest', $fn);
@@ -1198,12 +1202,12 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
         $injector = new Injector(ConfigFactory::create([]));
         try {
             $injector->make('BrightNucleus\Injector\Test\DependencyChainTest');
-        } catch (\Auryn\InjectionException $ie) {
+        } catch (InjectionException $ie) {
             $chain = $ie->getDependencyChain();
             $this->assertCount(2, $chain);
 
-            $this->assertEquals('brightnucleus\injector\test\dependencychaintest', $chain[0]);
-            $this->assertEquals('brightnucleus\injector\test\depinterface', $chain[1]);
+            $this->assertEquals('BrightNucleus\Injector\Test\DependencyChainTest', $chain[0]);
+            $this->assertEquals('BrightNucleus\Injector\Test\DepInterface', $chain[1]);
         }
     }
 
@@ -1213,12 +1217,12 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
         $injector->share('BrightNucleus\Injector\Test\SomeClassName');
 
         $inspection = $injector->inspect('BrightNucleus\Injector\Test\SomeClassName', Injector::I_SHARES);
-        $this->assertArrayHasKey('brightnucleus\injector\test\someclassname', $inspection[Injector::I_SHARES]);
+        $this->assertArrayHasKey('BrightNucleus\Injector\Test\SomeClassName', $inspection[Injector::I_SHARES]);
     }
 
     /**
-     * @expectedException \Auryn\InjectionException
-     * @expectedExceptionCode \Auryn\Injector::E_MAKING_FAILED
+     * @expectedException \BrightNucleus\Injector\Exception\InjectionException
+     * @expectedExceptionCode \BrightNucleus\Injector\Exception\InjectorException::E_MAKING_FAILED
      */
     public function testDelegationDoesntMakeObject()
     {
@@ -1231,8 +1235,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Auryn\InjectionException
-     * @expectedExceptionCode \Auryn\Injector::E_MAKING_FAILED
+     * @expectedException \BrightNucleus\Injector\Exception\InjectionException
+     * @expectedExceptionCode \BrightNucleus\Injector\Exception\InjectorException::E_MAKING_FAILED
      */
     public function testDelegationDoesntMakeObjectMakesString()
     {
@@ -1248,11 +1252,11 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     {
         $injector = new Injector(ConfigFactory::create([]));
         $expected = new SomeImplementation; // <-- implements SomeInterface
-        $injector->prepare("BrightNucleus\Injector\Test\SomeInterface",
+        $injector->prepare('BrightNucleus\Injector\Test\SomeInterface',
             function ($impl) use ($expected) {
                 return $expected;
             });
-        $actual = $injector->make("BrightNucleus\Injector\Test\SomeImplementation");
+        $actual = $injector->make('BrightNucleus\Injector\Test\SomeImplementation');
         $this->assertSame($expected, $actual);
     }
 
@@ -1260,11 +1264,11 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     {
         $injector = new Injector(ConfigFactory::create([]));
         $expected = new SomeImplementation; // <-- implements SomeInterface
-        $injector->prepare("BrightNucleus\Injector\Test\SomeImplementation",
+        $injector->prepare('BrightNucleus\Injector\Test\SomeImplementation',
             function ($impl) use ($expected) {
                 return $expected;
             });
-        $actual = $injector->make("BrightNucleus\Injector\Test\SomeImplementation");
+        $actual = $injector->make('BrightNucleus\Injector\Test\SomeImplementation');
         $this->assertSame($expected, $actual);
     }
 
@@ -1284,20 +1288,47 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
 
             $parent = $injector->make('BrightNucleus\Injector\Test\ParentWithConstructor');
             $this->assertEquals('parent', $parent->foo);
-        } catch (\Auryn\InjectionException $ie) {
+        } catch (InjectionException $ie) {
             echo $ie->getMessage();
-            $this->fail("Auryn failed to locate the ");
+            $this->fail('Auryn failed to locate the ');
         }
     }
 
     /**
-     * @expectedException \Auryn\InjectionException
-     * @expectedExceptionCode \Auryn\Injector::E_UNDEFINED_PARAM
+     * @expectedException \BrightNucleus\Injector\Exception\InjectionException
+     * @expectedExceptionCode \BrightNucleus\Injector\Exception\InjectorException::E_UNDEFINED_PARAM
      */
     public function testChildWithoutConstructorMissingParam()
     {
         $injector = new Injector(ConfigFactory::create([]));
         $injector->define('BrightNucleus\Injector\Test\ParentWithConstructor', array(':foo' => 'parent'));
         $injector->make('BrightNucleus\Injector\Test\ChildWithoutConstructor');
+    }
+
+    public function testInjectionChainValue()
+    {
+
+        $fn = function (InjectionChain $ic) {
+            if ($ic->getByIndex(-3) ===
+                'BrightNucleus\Injector\Test\InjectionChainTestDependency'
+            ) {
+                return new InjectionChainValue('Value for dependency');
+            } else if ($ic->getByIndex(-3) ===
+                       'BrightNucleus\Injector\Test\InjectionChainTest'
+            ) {
+                return new InjectionChainValue('Value for parent');
+            }
+
+            return new InjectionChainValue('unknown value');
+        };
+
+        $injector = new Injector(ConfigFactory::create([]));
+        $injector->share($injector);
+        $injector->delegate('BrightNucleus\Injector\Test\InjectionChainValue', $fn);
+        $injector->delegate('BrightNucleus\Injector\InjectionChain', [$injector, 'getInjectionChain']);
+
+        $object = $injector->make('BrightNucleus\Injector\Test\InjectionChainTest');
+        $this->assertEquals($object->icv->value, 'Value for parent');
+        $this->assertEquals($object->dependency->icv->value, 'Value for dependency');
     }
 }

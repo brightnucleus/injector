@@ -15,10 +15,10 @@
     }
   ],
   "require": {
-    "brightnucleus/exceptions": ">=0.2",
-    "brightnucleus/config": ">=0.3.1",
-    "rdlowrey/auryn": "^1.4",
-    "ocramius/proxy-manager": "^2.0"
+    "brightnucleus/exceptions": "^0.2",
+    "brightnucleus/config": "^0.4.7",
+    "ocramius/proxy-manager": "^2.0",
+    "rdlowrey/auryn": " ^1.4"
   },
   "autoload": {
     "psr-4": {

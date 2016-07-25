@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.3.0] - 2016-07-25
+### Added
+- The instantiation chain can be queried from within delegate closures.
+
+### Changed
+- Completely integrated former Auryn code dependency, to be able to take the code in a different direction where needed.
+- Aliases are case-sensitive now.
+
 ## [0.2.4] - 2016-07-22
 ### Added
 - Added support for `'preparations'` key.
@@ -16,7 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.2.1] - 2016-07-07
 ### Fixed
-- Fixed bug in argument defintions parsing.
+- Fixed bug in argument definitions parsing.
 
 ## [0.2.0] - 2016-07-07
 ### Added

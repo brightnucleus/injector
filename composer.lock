@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e0a7dcc763a16f708d5808bf6131dee7",
-    "content-hash": "e4f7b0d810eb9eee2ab7dc647204c596",
+    "hash": "b106f25fa5fe03f7d760dd774446c6a0",
+    "content-hash": "2156e1c863dd2fbd64b1c4fd5aa20400",
     "packages": [
         {
             "name": "brightnucleus/config",
-            "version": "v0.4.5",
+            "version": "v0.4.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brightnucleus/config.git",
-                "reference": "c2c5354d5c55cb104516ff04da9b2dc2f4aa4d66"
+                "reference": "c15e27d302e4025e454252858462a1ba2a6ed5f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brightnucleus/config/zipball/c2c5354d5c55cb104516ff04da9b2dc2f4aa4d66",
-                "reference": "c2c5354d5c55cb104516ff04da9b2dc2f4aa4d66",
+                "url": "https://api.github.com/repos/brightnucleus/config/zipball/c15e27d302e4025e454252858462a1ba2a6ed5f6",
+                "reference": "c15e27d302e4025e454252858462a1ba2a6ed5f6",
                 "shasum": ""
             },
             "require": {
@@ -47,7 +47,7 @@
                 }
             ],
             "description": "Minimal, reusable Config component.",
-            "time": "2016-07-05 17:07:03"
+            "time": "2016-07-22 13:10:05"
         },
         {
             "name": "brightnucleus/exceptions",
@@ -88,16 +88,16 @@
         },
         {
             "name": "ocramius/package-versions",
-            "version": "1.0.4",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ocramius/PackageVersions.git",
-                "reference": "7e9aa662b8405d6ee09844f66d7f32596902b538"
+                "reference": "510c1e5065c45e4318ddf86faafeda9f69e33014"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ocramius/PackageVersions/zipball/7e9aa662b8405d6ee09844f66d7f32596902b538",
-                "reference": "7e9aa662b8405d6ee09844f66d7f32596902b538",
+                "url": "https://api.github.com/repos/Ocramius/PackageVersions/zipball/510c1e5065c45e4318ddf86faafeda9f69e33014",
+                "reference": "510c1e5065c45e4318ddf86faafeda9f69e33014",
                 "shasum": ""
             },
             "require": {
@@ -105,8 +105,8 @@
                 "php": "~7.0"
             },
             "require-dev": {
-                "composer/composer": "^1.0.0-ALPHA11@ALPHA",
-                "phpunit/phpunit": "^5.2.8"
+                "composer/composer": "^1.2.0",
+                "phpunit/phpunit": "^5.4.7"
             },
             "type": "composer-plugin",
             "extra": {
@@ -118,7 +118,10 @@
             "autoload": {
                 "psr-4": {
                     "PackageVersions\\": "src/PackageVersions"
-                }
+                },
+                "files": [
+                    "src/PackageVersions/Versions.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -131,7 +134,7 @@
                 }
             ],
             "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
-            "time": "2016-04-23 17:52:40"
+            "time": "2016-07-22 14:47:43"
         },
         {
             "name": "ocramius/proxy-manager",
@@ -1010,16 +1013,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.26",
+            "version": "4.8.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "fc1d8cd5b5de11625979125c5639347896ac2c74"
+                "reference": "c062dddcb68e44b563f66ee319ddae2b5a322a90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fc1d8cd5b5de11625979125c5639347896ac2c74",
-                "reference": "fc1d8cd5b5de11625979125c5639347896ac2c74",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c062dddcb68e44b563f66ee319ddae2b5a322a90",
+                "reference": "c062dddcb68e44b563f66ee319ddae2b5a322a90",
                 "shasum": ""
             },
             "require": {
@@ -1078,7 +1081,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-05-17 03:09:28"
+            "time": "2016-07-21 06:48:14"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1510,16 +1513,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "2.6.1",
+            "version": "2.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "fb72ed32f8418db5e7770be1653e62e0d6f5dd3d"
+                "reference": "4edb770cb853def6e60c93abb088ad5ac2010c83"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/fb72ed32f8418db5e7770be1653e62e0d6f5dd3d",
-                "reference": "fb72ed32f8418db5e7770be1653e62e0d6f5dd3d",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/4edb770cb853def6e60c93abb088ad5ac2010c83",
+                "reference": "4edb770cb853def6e60c93abb088ad5ac2010c83",
                 "shasum": ""
             },
             "require": {
@@ -1584,7 +1587,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2016-05-30 22:24:32"
+            "time": "2016-07-13 23:29:13"
         },
         {
             "name": "symfony/yaml",

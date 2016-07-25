@@ -13,6 +13,7 @@ namespace BrightNucleus\Injector\Test;
 
 use BrightNucleus\Config\ConfigInterface;
 use BrightNucleus\Config\ConfigTrait;
+use BrightNucleus\Injector\Injector;
 
 interface SharedAliasedInterface
 {
@@ -807,7 +808,7 @@ class CloneTest
 
     public $injector;
 
-    public function __construct(\Auryn\Injector $injector)
+    public function __construct(Injector $injector)
     {
         $this->injector = clone $injector;
     }
@@ -853,4 +854,41 @@ class ParentWithConstructor
 class ChildWithoutConstructor extends ParentWithConstructor
 {
 
+}
+
+class InjectionChainValue
+{
+
+    public $value;
+
+    public function __construct($value)
+    {
+        $this->value = $value;
+    }
+}
+
+class InjectionChainTestDependency
+{
+
+    public $icv;
+
+    public function __construct(InjectionChainValue $icv)
+    {
+        $this->icv = $icv;
+    }
+}
+
+class InjectionChainTest
+{
+
+    public $icv;
+    public $dependency;
+
+    public function __construct(
+        InjectionChainTestDependency $ictd,
+        InjectionChainValue $icv
+    ) {
+        $this->dependency = $ictd;
+        $this->icv        = $icv;
+    }
 }
