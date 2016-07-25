@@ -9,7 +9,7 @@
 
 This is a config-driven dependency injector, to allow easy registration of alias mappings through the [`brightnucleus/config`](https://github.com/brightnucleus/config) component.
 
-It includes large parts of code from the `rdlowrey/auryn`(#https://github.com/rdlowrey/auryn) package.
+It includes large parts of code from the [`rdlowrey/auryn`](https://github.com/rdlowrey/auryn) package.
 
 Notable changes compared to Auryn:
 
@@ -19,6 +19,7 @@ Notable changes compared to Auryn:
 
 ## Table Of Contents
 
+* [Requirements](#requirements)
 * [Installation](#installation)
 * [Basic Usage](#basic-usage)
     * [Standard Aliases](#standard-aliases)
@@ -30,6 +31,10 @@ Notable changes compared to Auryn:
 * [Registering Additional Mappings](#registering-additional-mappings)
 * [Contributing](#contributing)
 * [License](#license)
+
+## Requirements
+
+BrightNucleus Injector requires PHP 7.0+.
 
 ## Installation
 
@@ -238,3 +243,9 @@ git commit --no-verify
 This code is released under the MIT license.
 
 For the full copyright and license information, please view the [`LICENSE`](LICENSE) file distributed with this source code.
+
+Large parts of this code were initially taken from the [`rdlowrey/auryn`](https://github.com/rdlowrey/auryn) project.
+
+Copyright for the original Auryn code is (c) 2013-2014 Daniel Lowrey, Levi Morrison, Dan Ackroyd.
+
+[Auryn contributor list](https://github.com/rdlowrey/auryn/graphs/contributors)
