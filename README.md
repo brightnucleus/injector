@@ -101,7 +101,7 @@ Standard aliases are defined through the `standardAliases` configuration key:
 
 ### Shared Aliases
 
-A shared alias is an alias that behaves similarly to a static variable, in that they get reused across all instantiations. So, for each new instantiation (using `Injector::make()`), you'll get exactly teh same instance each time. The object is only truly instantiated the first time it is needed, and this instance is then shared.
+A shared alias is an alias that behaves similarly to a static variable, in that they get reused across all instantiations. So, for each new instantiation (using `Injector::make()`), you'll get exactly the same instance each time. The object is only truly instantiated the first time it is needed, and this instance is then shared.
 
 Shared aliases are defined through the `sharedAliases` configuration key:
 
