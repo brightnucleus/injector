@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.3.1] - 2017-01-07
+### Changed
+- Limit ProxyManager version to 2.0 branch, 2.1 breaks BC.
+
 ## [0.3.0] - 2016-07-25
 ### Added
 - Added support for `'delegations'` key.
@@ -49,6 +53,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release to GitHub.
 
+[0.3.1]: https://github.com/brightnucleus/injector/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/brightnucleus/injector/compare/v0.2.4...v0.3.0
 [0.2.4]: https://github.com/brightnucleus/injector/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/brightnucleus/injector/compare/v0.2.2...v0.2.3
