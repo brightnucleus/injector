@@ -52,12 +52,12 @@ class Injector implements InjectorInterface
     const I_SHARES    = 16;
     const I_ALL       = 17;
 
-    const K_STANDARD_ALIASES     = 'standardAliases';
-    const K_SHARED_ALIASES       = 'sharedAliases';
-    const K_ARGUMENT_DEFINITIONS = 'argumentDefinitions';
-    const K_ARGUMENT_PROVIDERS   = 'argumentProviders';
-    const K_DELEGATIONS          = 'delegations';
-    const K_PREPARATIONS         = 'preparations';
+    const STANDARD_ALIASES     = 'standardAliases';
+    const SHARED_ALIASES       = 'sharedAliases';
+    const ARGUMENT_DEFINITIONS = 'argumentDefinitions';
+    const ARGUMENT_PROVIDERS   = 'argumentProviders';
+    const DELEGATIONS          = 'delegations';
+    const PREPARATIONS         = 'preparations';
 
     protected $reflector;
     protected $classDefinitions = [];
@@ -124,12 +124,12 @@ class Injector implements InjectorInterface
     public function registerMappings(ConfigInterface $config)
     {
         $configKeys = [
-            static::K_STANDARD_ALIASES     => 'mapAliases',
-            static::K_SHARED_ALIASES       => 'shareAliases',
-            static::K_ARGUMENT_DEFINITIONS => 'defineArguments',
-            static::K_ARGUMENT_PROVIDERS   => 'defineArgumentProviders',
-            static::K_DELEGATIONS          => 'defineDelegations',
-            static::K_PREPARATIONS         => 'definePreparations',
+            static::STANDARD_ALIASES     => 'mapAliases',
+            static::SHARED_ALIASES       => 'shareAliases',
+            static::ARGUMENT_DEFINITIONS => 'defineArguments',
+            static::ARGUMENT_PROVIDERS   => 'defineArgumentProviders',
+            static::DELEGATIONS          => 'defineDelegations',
+            static::PREPARATIONS         => 'definePreparations',
         ];
         try {
             foreach ($configKeys as $key => $method) {
