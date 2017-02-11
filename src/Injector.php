@@ -296,7 +296,12 @@ class Injector implements InjectorInterface
             ? $this->argumentDefinitions[$alias]
             : [];
 
-        $argumentDefinition[":${argument}"] = $value;
+        if ($value instanceof Injection) {
+            $argumentDefinition[$argument] = $value->getAlias();
+        } else {
+            $argumentDefinition[":${argument}"] = $value;
+        }
+
         $this->argumentDefinitions[$alias]  = $argumentDefinition;
 
         $this->define($alias, $this->argumentDefinitions[$alias]);

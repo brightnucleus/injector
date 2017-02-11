@@ -132,6 +132,16 @@ The argument definitions allow you to let the `Injector` know what to pass in to
 ]
 ```
 
+By default, the values you pass in as definitions are assumed to be raw values to be used as they are. If you want to pass in an alias through the 'argumentDefinitions' key, wrap it in a `BrightNucleus\Injector\Injcetion` class, like so:
+```PHP
+'argumentDefinitions' => [
+	'config' => [
+		'config' => new Injection( 'My\Custom\ConfigClass' ),
+	]
+]
+```
+
+
 ### Argument Providers
 
 The argument providers allow you to let the `Injector` know what to pass in to arguments when you need to instantiate objects, like `$config` or `$logger`. As these are probably different for each object, we need a way to map them to specific aliases (instead of having one global value to pass in). This is done by mapping each alias to a callable that returns an object of the correct type.
