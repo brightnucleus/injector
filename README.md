@@ -89,12 +89,12 @@ $bookReader->read();
 
 A standard alias is an alias that behaves like a normal class. So, for each new instantiation (using `Injector::make()`), you'll get a fresh new instance.
 
-Standard aliases are defined through the `standardAliases` configuration key:
+Standard aliases are defined through the `Injector::STANDARD_ALIASES` configuration key:
 
 ```PHP
 // Format:
 //    '<class/interface>' => '<concrete class to instantiate>',
-'standardAliases' => [
+Injector::STANDARD_ALIASES => [
     'BrightNucleus\Config\ConfigInterface' => 'BrightNucleus\Config\Config',
 ]
 ```
@@ -103,12 +103,12 @@ Standard aliases are defined through the `standardAliases` configuration key:
 
 A shared alias is an alias that behaves similarly to a static variable, in that they get reused across all instantiations. So, for each new instantiation (using `Injector::make()`), you'll get exactly the same instance each time. The object is only truly instantiated the first time it is needed, and this instance is then shared.
 
-Shared aliases are defined through the `sharedAliases` configuration key:
+Shared aliases are defined through the `Injector::SHARED_ALIASES` configuration key:
 
 ```PHP
 // Format:
 //    '<class/interface>' => '<concrete class to instantiate>',
-'sharedAliases' => [
+Injector::SHARED_ALIASES => [
     'ShortcodeManager' => 'BrightNucleus\Shortcode\ShortcodeManager',
 ]
 ```
@@ -123,7 +123,7 @@ The argument definitions allow you to let the `Injector` know what to pass in to
 // '<alias to provide argument for>' => [
 //    '<argument>' => '<callable or scalar that returns the value>',
 // ],
-'argumentDefinitions' => [
+Injector::ARGUMENT_DEFINITIONS => [
 	'PDO' => [
 		'dsn'      => $dsn,
 		'username' => $username,
@@ -133,8 +133,9 @@ The argument definitions allow you to let the `Injector` know what to pass in to
 ```
 
 By default, the values you pass in as definitions are assumed to be raw values to be used as they are. If you want to pass in an alias through the 'argumentDefinitions' key, wrap it in a `BrightNucleus\Injector\Injcetion` class, like so:
+
 ```PHP
-'argumentDefinitions' => [
+Injector::ARGUMENT_DEFINITIONS => [
 	'config' => [
 		'config' => new Injection( 'My\Custom\ConfigClass' ),
 	]
@@ -160,11 +161,11 @@ If you want to map aliases to specific subtrees of Config files, you can do this
 //        '<alias to provide argument for>' => <callable that returns a matching object>,
 //    ],
 // ],
-'argumentProviders' => [
+Injector::ARGUMENT_PROVIDERS => [
     'config' => [
         'interface' => ConfigInterface::class,
         'mappings'  => [
-            'BrightNucleus\Shortcode\ShortcodeManager' => function ($alias, $interface) {
+            ShortcodeManager::class => function ($alias, $interface) {
                 return ConfigFactory::createSubConfig(
                     __DIR__ . '/config/defaults.php',
                     $alias
@@ -193,7 +194,7 @@ So, in the example below, we use `getByIndex(-2)` to fetch the second-to-last el
 ```PHP
 // Format:
 //    '<alias>' => <callable to use as factory>
-'delegations' => [
+Injector::DELEGATIONS => [
 	'Example\Namespace\ExampleDependency' => function ( InjectionChain $injectionChain ) {
 		$parent = $injectionChain->getByIndex(-2);
 		$factory = new \Example\Namespace\ExampleFactory();
@@ -211,7 +212,7 @@ The callable will receive two arguments, the object to prepare, as well as a ref
 ```PHP
 // Format:
 //    '<alias>' => <callable to execute after instantiation>
-'preparations' => [
+Injector::PREPARATIONS => [
 	'PDO' => function ( $instance, $injector ) {
 		/** @var $instance PDO */
 		$instance->setAttribute(
@@ -228,7 +229,7 @@ You can register additional mappings at any time by simply passing additional Co
 
 ```PHP
 $config = ConfigFactory::create([
-    'standardAliases' => [
+    Injector::STANDARD_ALIASES => [
         'ExampleInterface' => 'ConcreteExample'
     ]
 ]);
