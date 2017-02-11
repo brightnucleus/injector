@@ -132,7 +132,7 @@ Injector::ARGUMENT_DEFINITIONS => [
 ]
 ```
 
-By default, the values you pass in as definitions are assumed to be raw values to be used as they are. If you want to pass in an alias through the 'argumentDefinitions' key, wrap it in a `BrightNucleus\Injector\Injcetion` class, like so:
+By default, the values you pass in as definitions are assumed to be raw values to be used as they are. If you want to pass in an alias through the `Injector::ARGUMENT_DEFINITIONS` key, wrap it in a `BrightNucleus\Injector\Injcetion` class, like so:
 
 ```PHP
 Injector::ARGUMENT_DEFINITIONS => [
