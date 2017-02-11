@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.4.1] - 2017-02-11
+### Added
+- Added `BrightNucleus\Injector\Injection` class as a mechanism to pass instantiatable aliases to the argument definitions key.
+
 ## [0.4.0] - 2017-02-10
 ### Changed
 - Remove `K_` prefix from key constants.
@@ -57,6 +61,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release to GitHub.
 
+[0.4.1]: https://github.com/brightnucleus/injector/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/brightnucleus/injector/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/brightnucleus/injector/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/brightnucleus/injector/compare/v0.2.4...v0.3.0
