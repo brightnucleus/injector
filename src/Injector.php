@@ -855,7 +855,8 @@ class Injector implements InjectorInterface
                     InjectorException::M_UNDEFINED_PARAM,
                     $reflParam->name,
                     $reflParam->getPosition(),
-                    $funcWord
+                    $funcWord,
+                    implode( ' => ', array_keys( $this->inProgressMakes ) )
                 ),
                 InjectorException::E_UNDEFINED_PARAM
             );

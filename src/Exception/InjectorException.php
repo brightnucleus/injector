@@ -41,7 +41,7 @@ interface InjectorException extends ExceptionInterface
     const E_MAKE_FAILURE           = 8;
     const M_MAKE_FAILURE           = 'Could not make %s: %s';
     const E_UNDEFINED_PARAM        = 9;
-    const M_UNDEFINED_PARAM        = 'No definition available to provision typeless parameter $%s at position %d in %s()';
+    const M_UNDEFINED_PARAM        = 'No definition available to provision typeless parameter $%s at position %d in %s(). Injection Chain: %s';
     const E_DELEGATE_ARGUMENT      = 10;
     const M_DELEGATE_ARGUMENT      = '%s::delegate expects a valid callable or executable class::method string at Argument 2%s';
     const E_CYCLIC_DEPENDENCY      = 11;
