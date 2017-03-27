@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.4.2] - 2017-03-27
+### Changed
+- Use key constants of raw config keys.
+- Remove `composer.lock` file.
+- Improve error message on undefined parameters.
+
 ## [0.4.1] - 2017-02-11
 ### Added
 - Added `BrightNucleus\Injector\Injection` class as a mechanism to pass instantiatable aliases to the argument definitions key.
@@ -61,6 +67,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release to GitHub.
 
+[0.4.2]: https://github.com/brightnucleus/injector/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/brightnucleus/injector/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/brightnucleus/injector/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/brightnucleus/injector/compare/v0.3.0...v0.3.1
