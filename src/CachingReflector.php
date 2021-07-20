@@ -150,8 +150,10 @@ class CachingReflector implements Reflector
         if (false !== $typeHint) {
             return $typeHint;
         }
-
-        if ($reflectionClass = $param->getClass()) {
+        
+        $reflectionClass = ($param->getType() && !$param->getType()->isBuiltin()) ? new ReflectionClass($param->getType()->getName()) : null;
+        
+        if ($reflectionClass !== null) {
             $typeHint      = $reflectionClass->getName();
             $classCacheKey = self::CACHE_KEY_CLASSES . strtolower($typeHint);
             $this->cache->store($classCacheKey, $reflectionClass);
