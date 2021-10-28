@@ -151,8 +151,15 @@ class CachingReflector implements Reflector
             return $typeHint;
         }
         
-        $reflectionClass = ($param->getType() && !$param->getType()->isBuiltin()) ? new ReflectionClass($param->getType()->getName()) : null;
-        
+        // Checking if the PHP version is 7 or higher, so we keep the compatibility
+        if ( PHP_VERSION_ID >= 70000 ) {
+            // $param->getType() got introduced with PHP version 7
+            $reflectionClass = ($param->getType() && !$param->getType()->isBuiltin()) ? new ReflectionClass($param->getType()->getName()) : null;
+        } else {
+            // Keeping support for PHP version below 7 - $param->getClass() is deprecated in PHP 8+
+            $reflectionClass = $param->getClass();
+        }
+
         if ($reflectionClass !== null) {
             $typeHint      = $reflectionClass->getName();
             $classCacheKey = self::CACHE_KEY_CLASSES . strtolower($typeHint);
