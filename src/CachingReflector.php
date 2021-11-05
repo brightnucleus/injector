@@ -152,7 +152,7 @@ class CachingReflector implements Reflector
         }
         
         // Checking if the PHP version is 7 or higher, so we keep the compatibility
-        if ( PHP_VERSION_ID >= 70000 ) {
+        if (PHP_VERSION_ID >= 70000) {
             $reflectionClass = ($param->getType() && !$param->getType()->isBuiltin()) ? new ReflectionClass($param->getType()->getName()) : null;
         } else {
             // As $parameter->(has|get)Type() was only introduced with PHP 7.0+,
