@@ -156,8 +156,8 @@ class CachingReflector implements Reflector
             $reflectionClass = ($param->getType() && !$param->getType()->isBuiltin()) ? new ReflectionClass($param->getType()->getName()) : null;
         } else {
             // As $parameter->(has|get)Type() was only introduced with PHP 7.0+,
-			// we need to provide a work-around for PHP 5.6 while we officially
-			// support it.
+            // we need to provide a work-around for PHP 5.6 while we officially
+            // support it.
 
             $reflectionClass = $param->getClass();
         }
