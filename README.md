@@ -2,9 +2,9 @@
 
 > Config-driven Dependency Injector, based in large parts on Auryn.
 
+[![Build Status](https://github.com/brightnucleus/injector/actions/workflows/testing.yml/badge.svg)](https://github.com/brightnucleus/injector/actions/workflows/testing.yml)
 [![Latest Stable Version](https://img.shields.io/packagist/v/brightnucleus/injector.svg)](https://packagist.org/packages/brightnucleus/injector)
 [![Total Downloads](https://img.shields.io/packagist/dt/brightnucleus/injector.svg)](https://packagist.org/packages/brightnucleus/injector)
-[![Latest Unstable Version](https://img.shields.io/packagist/vpre/brightnucleus/injector.svg)](https://packagist.org/packages/brightnucleus/injector)
 [![License](https://img.shields.io/packagist/l/brightnucleus/injector.svg)](https://packagist.org/packages/brightnucleus/injector)
 
 This is a config-driven dependency injector, to allow easy registration of alias mappings through the [`brightnucleus/config`](https://github.com/brightnucleus/config) component.
