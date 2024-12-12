@@ -29,7 +29,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "BrightNucleus\\Injector\\Test\\": "tests/"
+      "BrightNucleus\\Injector\\Tests\\": "tests/"
     },
     "files": ["tests/fixtures/TestClasses.php"]
   },

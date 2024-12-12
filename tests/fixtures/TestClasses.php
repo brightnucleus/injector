@@ -9,7 +9,7 @@
  * @copyright 2016 Alain Schlesser, Bright Nucleus
  */
 
-namespace BrightNucleus\Injector\Test;
+namespace BrightNucleus\Injector\Tests;
 
 use BrightNucleus\Config\ConfigInterface;
 use BrightNucleus\Config\ConfigTrait;

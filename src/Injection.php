@@ -24,36 +24,36 @@ namespace BrightNucleus\Injector;
  */
 class Injection
 {
-	/**
-	 * Alias that should be instantiated.
-	 *
-	 * @since 0.4.1
-	 *
-	 * @var string
-	 */
-	private $alias;
+    /**
+     * Alias that should be instantiated.
+     *
+     * @since 0.4.1
+     *
+     * @var string
+     */
+    private $alias;
 
-	/**
-	 * Instantiate an Injection object.
-	 *
-	 * @since 0.4.1
-	 *
-	 * @param string $alias Alias that should be instantiated.
-	 */
-	public function __construct(string $alias)
-	{
-		$this->alias = $alias;
-	}
+    /**
+     * Instantiate an Injection object.
+     *
+     * @since 0.4.1
+     *
+     * @param string $alias Alias that should be instantiated.
+     */
+    public function __construct(string $alias)
+    {
+        $this->alias = $alias;
+    }
 
-	/**
-	 * Get the alias that should be instantiated.
-	 *
-	 * @since 0.4.1
-	 *
-	 * @return string Alias that should be instantiated.
-	 */
-	public function getAlias()
-	{
-		return $this->alias;
-	}
+    /**
+     * Get the alias that should be instantiated.
+     *
+     * @since 0.4.1
+     *
+     * @return string Alias that should be instantiated.
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
 }

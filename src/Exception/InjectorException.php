@@ -29,7 +29,8 @@ interface InjectorException extends ExceptionInterface
     const E_SHARED_CANNOT_ALIAS    = 2;
     const M_SHARED_CANNOT_ALIAS    = 'Cannot alias class %s to %s because it is currently shared';
     const E_SHARE_ARGUMENT         = 3;
-    const M_SHARE_ARGUMENT         = '%s::share() requires a string class name or object instance at Argument 1; %s specified';
+    const M_SHARE_ARGUMENT         = '%s::share() requires a string class name or object instance at Argument 1;'
+        . ' %s specified';
     const E_ALIASED_CANNOT_SHARE   = 4;
     const M_ALIASED_CANNOT_SHARE   = 'Cannot share class %s because it is currently aliased to %s';
     const E_INVOKABLE              = 5;
@@ -41,9 +42,11 @@ interface InjectorException extends ExceptionInterface
     const E_MAKE_FAILURE           = 8;
     const M_MAKE_FAILURE           = 'Could not make %s: %s';
     const E_UNDEFINED_PARAM        = 9;
-    const M_UNDEFINED_PARAM        = 'No definition available to provision typeless parameter $%s at position %d in %s(). Injection Chain: %s';
+    const M_UNDEFINED_PARAM        = 'No definition available to provision typeless parameter $%s at position %d in'
+        . ' %s(). Injection Chain: %s';
     const E_DELEGATE_ARGUMENT      = 10;
-    const M_DELEGATE_ARGUMENT      = '%s::delegate expects a valid callable or executable class::method string at Argument 2%s';
+    const M_DELEGATE_ARGUMENT      = '%s::delegate expects a valid callable or executable class::method string at'
+        . ' Argument 2%s';
     const E_CYCLIC_DEPENDENCY      = 11;
     const M_CYCLIC_DEPENDENCY      = 'Detected a cyclic dependency while provisioning %s';
     const E_MAKING_FAILED          = 12;

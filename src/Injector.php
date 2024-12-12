@@ -326,11 +326,11 @@ class Injector implements InjectorInterface
 
         $factory     = new LazyLoadingValueHolderFactory();
         $initializer = function (
-            & $wrappedObject,
+            &$wrappedObject,
             LazyLoadingInterface $proxy,
             $method,
             array $parameters,
-            & $initializer
+            &$initializer
         ) use (
             $alias,
             $interface,
@@ -563,7 +563,11 @@ class Injector implements InjectorInterface
                       count($callableOrMethodStr) === 2
             ) {
                 if (is_string($callableOrMethodStr[0]) && is_string($callableOrMethodStr[1])) {
-                    $errorDetail = " but received ['" . $callableOrMethodStr[0] . "', '" . $callableOrMethodStr[1] . "']";
+                    $errorDetail = " but received ['"
+                    . $callableOrMethodStr[0]
+                    . "', '"
+                    . $callableOrMethodStr[1]
+                    . "']";
                 }
             }
             throw new ConfigException(
@@ -751,8 +755,10 @@ class Injector implements InjectorInterface
             } elseif (isset($definition[$name]) || array_key_exists($name, $definition)) {
                 // interpret the param as a class name to be instantiated
                 $arg = $this->make($definition[$name]);
-            } elseif (($prefix = static::A_RAW . $name) && (isset($definition[$prefix]) || array_key_exists($prefix,
-                        $definition))
+            } elseif (($prefix = static::A_RAW . $name) && (isset($definition[$prefix]) || array_key_exists(
+                $prefix,
+                $definition
+            ))
             ) {
                 // interpret the param as a raw value to be injected
                 $arg = $definition[$prefix];
@@ -777,14 +783,14 @@ class Injector implements InjectorInterface
         if (! is_array($definition)) {
             throw new InjectionException(
                 $this->inProgressMakes
-            // @TODO Add message
+                // @TODO Add message
             );
         }
 
         if (! isset($definition[0], $definition[1])) {
             throw new InjectionException(
                 $this->inProgressMakes
-            // @TODO Add message
+                // @TODO Add message
             );
         }
 
@@ -856,7 +862,7 @@ class Injector implements InjectorInterface
                     $reflParam->name,
                     $reflParam->getPosition(),
                     $funcWord,
-                    implode( ' => ', array_keys( $this->inProgressMakes ) )
+                    implode(' => ', array_keys($this->inProgressMakes))
                 ),
                 InjectorException::E_UNDEFINED_PARAM
             );
@@ -874,6 +880,18 @@ class Injector implements InjectorInterface
             if ($result instanceof $normalizedClass) {
                 $obj = $result;
             }
+        }
+
+        if ($obj === null) {
+            throw new InjectionException(
+                $this->inProgressMakes,
+                sprintf(
+                    InjectorException::M_MAKING_FAILED,
+                    $normalizedClass,
+                    'null'
+                ),
+                InjectorException::E_MAKING_FAILED
+            );
         }
 
         $interfaces = @class_implements($obj);
