@@ -86,7 +86,7 @@ class Injector implements InjectorInterface
      * @throws FailedToProcessConfigException If the config file could not be processed.
      * @throws InvalidMappingsException       If the definitions could not be registered.
      */
-    public function __construct(ConfigInterface $config, Reflector $reflector = null)
+    public function __construct(ConfigInterface $config, ?Reflector $reflector = null)
     {
         $this->processConfig($config);
         $this->registerMappings($this->config);
@@ -299,7 +299,7 @@ class Injector implements InjectorInterface
         if ($value instanceof Injection) {
             $argumentDefinition[$argument] = $value->getAlias();
         } else {
-            $argumentDefinition[":${argument}"] = $value;
+            $argumentDefinition[":{$argument}"] = $value;
         }
 
         $this->argumentDefinitions[$alias]  = $argumentDefinition;
@@ -737,7 +737,7 @@ class Injector implements InjectorInterface
     protected function provisionFuncArgs(
         ReflectionFunctionAbstract $reflFunc,
         array $definition,
-        array $reflParams = null
+        ?array $reflParams = null
     ) {
         $args = [];
 

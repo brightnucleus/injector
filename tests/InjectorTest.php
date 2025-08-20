@@ -29,6 +29,7 @@ use stdClass;
  *
  * @package BrightNucleus\Injector
  * @author  Alain Schlesser <alain.schlesser@gmail.com>
+ * @covers  \BrightNucleus\Injector\Injector
  */
 class InjectorTest extends TestCase
 {

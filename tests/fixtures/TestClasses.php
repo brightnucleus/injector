@@ -232,6 +232,7 @@ class SpecdTestDependency extends TestDependency
 
 class TestNeedsDep
 {
+    public $testDep;
 
     public function __construct(TestDependency $testDep)
     {
@@ -241,6 +242,7 @@ class TestNeedsDep
 
 class TestClassWithNoCtorTypehints
 {
+    public $test;
 
     public function __construct($val = 42)
     {
@@ -250,6 +252,7 @@ class TestClassWithNoCtorTypehints
 
 class TestMultiDepsNeeded
 {
+    public $testDep;
 
     public function __construct(TestDependency $val1, TestDependency2 $val2)
     {
@@ -260,6 +263,7 @@ class TestMultiDepsNeeded
 
 class TestMultiDepsWithCtor
 {
+    public $testDep;
 
     public function __construct(TestDependency $val1, TestNeedsDep $val2)
     {
@@ -309,8 +313,8 @@ class DepImplementation implements DepInterface
 
 class RequiresInterface
 {
-
     public $dep;
+    public $testDep;
 
     public function __construct(DepInterface $dep)
     {
@@ -350,6 +354,7 @@ class ClassOuter
 
 class ProvTestNoDefinitionNullDefaultClass
 {
+    public $arg;
 
     public function __construct($arg = null)
     {
@@ -404,6 +409,7 @@ class InjectorTestRawCtorParams
 
 class InjectorTestParentClass
 {
+    public $arg1;
 
     public function __construct($arg1)
     {
@@ -413,6 +419,7 @@ class InjectorTestParentClass
 
 class InjectorTestChildClass extends InjectorTestParentClass
 {
+    public $arg2;
 
     public function __construct($arg1, $arg2)
     {
@@ -688,6 +695,7 @@ class TestDependencyWithProtectedConstructor
 
 class TestNeedsDepWithProtCons
 {
+    public $dep;
 
     public function __construct(TestDependencyWithProtectedConstructor $dep)
     {
@@ -713,14 +721,12 @@ class SomeClassName
 
 class TestDelegationSimple
 {
-
-    public $delgateCalled = false;
+    public $delegateCalled = false;
 }
 
 class TestDelegationDependency
 {
-
-    public $delgateCalled = false;
+    public $delegateCalled = false;
 
     public function __construct(TestDelegationSimple $testDelegationSimple)
     {

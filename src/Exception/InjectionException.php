@@ -27,7 +27,7 @@ class InjectionException extends RuntimeException implements InjectorException
 
     public $dependencyChain;
 
-    public function __construct(array $inProgressMakes, $message = "", $code = 0, \Exception $previous = null)
+    public function __construct(array $inProgressMakes, $message = "", $code = 0, ?Exception $previous = null)
     {
         $this->dependencyChain = array_flip($inProgressMakes);
         ksort($this->dependencyChain);
@@ -41,7 +41,7 @@ class InjectionException extends RuntimeException implements InjectorException
     public static function fromInvalidCallable(
         array $inProgressMakes,
         $callableOrMethodStr,
-        Exception $previous = null
+        ?Exception $previous = null
     ) {
         $callableString = null;
 
